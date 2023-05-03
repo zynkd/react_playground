@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import cn from 'classnames';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -27,11 +28,22 @@ function App() {
           Simple counter form
         </h1>
         <h2 className='form-counter mb-2 text-lg font-bold text-center'>
-          Current counter:{' '}
+          {/* Current counter:{' '}
           <span
             style={{
               color: color,
             }}
+          >
+            {count}
+          </span> */}
+          Current counter:{' '}
+          <span
+            className={cn({
+              'text-red-500': color === 'red',
+              'text-green-500': color === 'green',
+              'text-blue-500': color === 'blue',
+              'text-purple-500': color === 'purple',
+            })}
           >
             {count}
           </span>
