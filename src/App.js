@@ -1,32 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 function App() {
+  const [count, setCount] = useState(0);
+
+  const handleIncreaseByOne = () => {
+    setCount((prev) => prev + 1);
+  };
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+  }
+
   return (
-    <div className="flex flex-col h-full items-center justify-center bg-gray-200 text-gray-700">
-      <div className="flex items-center">
-        <h1 className="text-6xl font-thin tracking-wider">Create React App + Tailwind CSS</h1>
-      </div>
-      <p className="my-6 tracking-wide">
-        Edit <code>src/App.js</code> and save to reload.
-      </p>
-      <div className="mt-6 flex justify-center">
-        <a
-          className="uppercase hover:underline"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div className='h-screen flex items-center justify-center'>
+      <form onSubmit={handleFormSubmit}>
+        <h1 className='form-title mb-2 text-2xl font-bold text-center'>
+          Simple counter form
+        </h1>
+        <h2 className='form-counter mb-2 text-lg font-bold text-center'>
+          {`Current counter ${count}`}
+        </h2>
+        <input
+          type='button'
+          value='Counter++'
+          className='bg-blue-500 text-white px-4 py-2 font-bold rounded-md m-2'
+          onClick={handleIncreaseByOne}
+        />
+        <button
+          className='bg-blue-500 text-white px-4 py-2 font-bold rounded-md m-2'
+          onClick={handleIncreaseByOne}
         >
-          Learn React
-        </a>
-        <a
-          className="ml-10 uppercase hover:underline"
-          href="https://tailwindcss.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn Tailwind
-        </a>
-      </div>
+          Counter [+1]
+        </button>
+      </form>
     </div>
   );
 }
