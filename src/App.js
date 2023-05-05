@@ -74,9 +74,6 @@ function App() {
     } else if (typedInput % 1 !== 0) {
       console.log('Not a number');
       setHasErrors(true);
-    } else if (!Number.isInteger(Number(typedInput))) {
-      console.log('Not an integer');
-      setHasErrors(true);
     } else if (typedInput < 1 || typedInput > 100) {
       console.log('Accepted numbers 1-100');
       setHasErrors(true);
