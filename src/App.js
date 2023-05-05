@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
+import { data } from 'autoprefixer';
 
 const API_URL = 'https://api.sampleapis.com/csscolornames/colors';
 
@@ -8,8 +9,13 @@ function App() {
   const [increment, setIncrement] = useState(1);
   const [customIncrement, setCustomIncrement] = useState('');
   const [color, setColor] = useState('');
-  const [text, setText] = useState('');
-  const [hasErrors, setHasErrors] = useState(false);
+  const [textIncrement, setTextIncrement] = useState('');
+  const [textColor, setTextColor] = useState('');
+  const [hasErrorsCustomIncrement, setHasErrorsCustomIncrement] =
+    useState(false);
+  const [errorMessageCustomIncrement, setErrorMessageCustomIncrement] =
+    useState('');
+  const [hasErrorsUpdateColor, setHasErrorsUpdateColor] = useState(false);
 
   const [dataFromServer, setDataFromServer] = useState(null);
 
@@ -32,24 +38,24 @@ function App() {
     setIncrement(1);
     setCustomIncrement('');
     setColor('');
-    setText('');
-    setHasErrors(false);
+    setTextIncrement('');
+    setHasErrorsCustomIncrement(false);
   };
 
   const handleColorSelect = (event) => {
     setColor(event.target.value);
   };
 
-  const handleTextChange = (event) => {
-    setText(event.target.value);
+  const handleTextIncrementChange = (event) => {
+    setTextIncrement(event.target.value);
   };
 
   const handleColorTextSubmit = () => {
-    if (text === 'red') {
+    if (textIncrement === 'red') {
       setColor('red');
     }
 
-    setText('');
+    setTextIncrement('');
   };
 
   const handleUpdateIncrementRoundButton = (e) => {
@@ -66,67 +72,71 @@ function App() {
     setCustomIncrement(typedInput);
 
     if (typedInput === '') {
-      setHasErrors(false);
+      setHasErrorsCustomIncrement(false);
     } else if (isNaN(typedInput)) {
-      console.log('Not a number');
-      setHasErrors(true);
+      setErrorMessageCustomIncrement('This is not a number');
+      setHasErrorsCustomIncrement(true);
       // Only integers allowed
     } else if (typedInput % 1 !== 0) {
-      console.log('Not a number');
-      setHasErrors(true);
+      setErrorMessageCustomIncrement('Decimal places are not allowed');
+      setHasErrorsCustomIncrement(true);
     } else if (typedInput < 1 || typedInput > 100) {
-      console.log('Accepted numbers 1-100');
-      setHasErrors(true);
+      setErrorMessageCustomIncrement('Numbers must be between 1 and 100');
+      setHasErrorsCustomIncrement(true);
     } else {
-      setHasErrors(false);
+      setHasErrorsCustomIncrement(false);
     }
   };
 
   const handleCustomIncrementSubmit = () => {
-    if (hasErrors === false && customIncrement !== '') {
+    if (hasErrorsCustomIncrement === false && customIncrement !== '') {
       setIncrement(+customIncrement);
     }
+
+    setCustomIncrement('');
   };
 
   return (
-    <div className='h-screen flex items-center justify-center'>
+    <div className='h-screen flex flex-col items-center justify-center'>
       <form onSubmit={handleFormSubmit}>
-        <h1 className='form-title mb-4 text-3xl font-bold text-center'>
-          Zynk's Simple Counter
+        <h1 className='form-title mb-4 text-3xl font-bold'>
+          Zynk's React Counter
         </h1>
-        <h2 className='mb-1 text-lg font-bold text-center'>
-          Counter:{' '}
-          <span
-            className={cn({
-              'text-red-500': color === 'red',
-              'text-green-500': color === 'green',
-              'text-blue-500': color === 'blue',
-              'text-purple-500': color === 'purple',
-            })}
-          >
-            {count}
-          </span>
-        </h2>
 
-        <div className='flex justify-center mb-4'>
-          <button
-            className='text-sm bg-blue-500 text-white px-4 py-2 font-bold rounded-md m-2 hover:bg-blue-700'
-            onClick={handleIncreaseByIncrement}
-            type='button'
-          >
-            Increase +{increment}
-          </button>
-          <button
-            className='text-sm bg-blue-500 text-white px-4 py-2 font-bold rounded-md m-2 hover:bg-blue-700'
-            onClick={handleResetCounter}
-            type='button'
-          >
-            Reset
-          </button>
+        <div className='text-center text-md mb-6'>
+          <h2 className='mb-1 text-lg font-bold'>
+            Counter:{' '}
+            <span
+              className={cn({
+                'text-red-500': color === 'red',
+                'text-green-500': color === 'green',
+                'text-blue-500': color === 'blue',
+                'text-purple-500': color === 'purple',
+              })}
+            >
+              {count}
+            </span>
+          </h2>
+          <div className='flex justify-center mb-4'>
+            <button
+              className='text-sm bg-blue-500 text-white px-4 py-2 font-bold rounded-md m-2 hover:bg-blue-700'
+              onClick={handleIncreaseByIncrement}
+              type='button'
+            >
+              Increase +{increment}
+            </button>
+            <button
+              className='text-sm bg-blue-500 text-white px-4 py-2 font-bold rounded-md m-2 hover:bg-blue-700'
+              onClick={handleResetCounter}
+              type='button'
+            >
+              Reset
+            </button>
+          </div>
         </div>
 
-        <div className='text-center text-md mb-12'>
-          <h2 className='mb-3 text-lg font-bold text-center'>
+        <div className='text-center text-md mb-6'>
+          <h2 className='mb-3 text-lg font-bold'>
             {`Increment: ${increment}`}
           </h2>
 
@@ -160,26 +170,41 @@ function App() {
             <input
               type='button'
               value='Apply'
-              className='bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600 hover:font-bold'
+              className={cn(
+                'bg-blue-500',
+                'text-white',
+                'px-4',
+                'py-2',
+                'rounded-md',
+                'text-sm',
+                'hover:bg-blue-600',
+                {
+                  'opacity-50': hasErrorsCustomIncrement,
+                  'cursor-not-allowed': hasErrorsCustomIncrement,
+                  'hover:bg-blue-500': hasErrorsCustomIncrement,
+                },
+              )}
               onClick={handleCustomIncrementSubmit}
+              disabled={hasErrorsCustomIncrement}
             />
           </div>
-          {hasErrors && (
-            <div class='bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-1 text-left'>
-              Input not in the right format!
+          {hasErrorsCustomIncrement && (
+            <div class='mt-3 bg-orange-100 border-l-8 border-orange-500 text-orange-700 p-2 w-[300px] text-center flex mx-auto justify-center'>
+              {errorMessageCustomIncrement}
             </div>
           )}
         </div>
 
-        <div className='flex justify-center gap-3 mb-5'>
-          <label className='mb-1 text-center' htmlFor='id-select-counter-color'>
-            Change counter color:
-          </label>
+        <div className='text-center text-md mb-6'>
+          <h2 className='mb-3 text-lg font-bold'>{`Color: default`}</h2>
+
+          <label htmlFor='id-select-counter-color'>{`Counter color: `}</label>
+
           <select
             value={color}
             onChange={handleColorSelect}
             id='id-select-counter-color'
-            className='outline-none'
+            className='outline-none mb-4'
           >
             <option value=''>Choose color</option>
             <option value='red'>Red</option>
@@ -187,24 +212,48 @@ function App() {
             <option value='blue'>Blue</option>
             <option value='purple'>Purple</option>
           </select>
-        </div>
 
-        <div className='flex justify-center gap-3 text-sm'>
-          <input
-            name='input-text-1'
-            type='text'
-            className='bg-blue-100 px-2 outline-none'
-            value={text}
-            onChange={handleTextChange}
-          />
-          <input
-            type='button'
-            value='Update Color'
-            className='bg-blue-200 text-black px-4 py-2 rounded-md'
-            onClick={handleColorTextSubmit}
-          />
+          <div className='flex justify-center gap-3 text-sm'>
+            <input
+              name='input-text-1'
+              type='text'
+              className='bg-blue-100 px-3 py-2 outline-none'
+              value={textColor}
+              onChange={handleTextIncrementChange}
+            />
+            <input
+              type='button'
+              value='Update Color'
+              className={cn(
+                'bg-blue-500',
+                'text-white',
+                'px-4',
+                'py-2',
+                'rounded-md',
+                'text-sm',
+                'hover:bg-blue-600',
+                {
+                  'opacity-50': hasErrorsUpdateColor,
+                  'cursor-not-allowed': hasErrorsUpdateColor,
+                  'hover:bg-blue-500': hasErrorsUpdateColor,
+                },
+              )}
+              onClick={handleColorTextSubmit}
+              disabled={hasErrorsUpdateColor}
+            />
+          </div>
         </div>
       </form>
+
+      {dataFromServer && dataFromServer.map((item) => {
+        if (item.id < 10) {
+          return (
+            <p>{`${item.name} - ${item.hex} (id=${item.id})`}</p>
+          )
+        }
+
+        return null;
+      })}
     </div>
   );
 }
