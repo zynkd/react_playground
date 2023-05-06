@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
 import { data } from 'autoprefixer';
+import { type } from '@testing-library/user-event/dist/type';
 
 const API_URL = 'https://api.sampleapis.com/csscolornames/colors';
 
@@ -11,13 +12,17 @@ function App() {
   const [color, setColor] = useState('');
   const [textIncrement, setTextIncrement] = useState('');
   const [textColor, setTextColor] = useState('');
+  const [dataFromServer, setDataFromServer] = useState(null);
+
+  // Errors when choosing custom counter increment
   const [hasErrorsCustomIncrement, setHasErrorsCustomIncrement] =
     useState(false);
   const [errorMessageCustomIncrement, setErrorMessageCustomIncrement] =
     useState('');
-  const [hasErrorsUpdateColor, setHasErrorsUpdateColor] = useState(false);
 
-  const [dataFromServer, setDataFromServer] = useState(null);
+  // Errors when trying type or submit a new color
+  const [hasErrorTextColor, setHasErrorTextColor] = useState(false);
+  const [hasErrorSubmitColor, setHasErrorSubmitColor] = useState(false);
 
   useEffect(() => {
     fetch(API_URL)
@@ -25,11 +30,45 @@ function App() {
       .then((data) => setDataFromServer(data));
   }, []);
 
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
+  // Make error message appear for only a couple of seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setHasErrorSubmitColor(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [hasErrorSubmitColor]);
+
+  const handleTextColor = (e) => {
+    const typedInput = e.target.value;
+    setTextColor(typedInput);
+
+    if (typedInput === '' || /^[A-Za-z\s]+$/.test(typedInput)) {
+      setHasErrorTextColor(false);
+    } else {
+      setHasErrorTextColor(true);
+    }
   };
 
-  const handleIncreaseByIncrement = () => {
+  const handleSubmitColor = () => {
+    const foundColor = dataFromServer.find((item) => item.name === textColor);
+
+    setTextColor('');
+
+    foundColor
+      ? setColor(foundColor.hex)
+      : setHasErrorSubmitColor(true);
+  };
+
+  const handleSelectIncrement = (e) => {
+    setIncrement(+e.target.value);
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+  };
+
+  const handleClickIncreaseByIncrement = () => {
     setCount((prev) => prev + increment);
   };
 
@@ -42,27 +81,11 @@ function App() {
     setHasErrorsCustomIncrement(false);
   };
 
-  const handleColorSelect = (event) => {
-    setColor(event.target.value);
+  const handleSelectColor = (e) => {
+    setColor(e.target.value);
   };
 
-  const handleTextIncrementChange = (event) => {
-    setTextIncrement(event.target.value);
-  };
-
-  const handleColorTextSubmit = () => {
-    if (textIncrement === 'red') {
-      setColor('red');
-    }
-
-    setTextIncrement('');
-  };
-
-  const handleUpdateIncrementRoundButton = (e) => {
-    setIncrement(+e.target.value);
-  };
-
-  const handleCustomIncrement = (e) => {
+  const handleTextCustomIncrement = (e) => {
     // Calling `setState` doesn't immediately update the state object -> won't be
     // able to see the new change immediately after calling setState ...
     // Solution 1 - storing input in another variable (and test-validate that)
@@ -88,7 +111,7 @@ function App() {
     }
   };
 
-  const handleCustomIncrementSubmit = () => {
+  const handleSubmitCustomIncrement = () => {
     if (hasErrorsCustomIncrement === false && customIncrement !== '') {
       setIncrement(+customIncrement);
     }
@@ -104,23 +127,18 @@ function App() {
         </h1>
 
         <div className='text-center text-md mb-6'>
-          <h2 className='mb-1 text-lg font-bold'>
-            Counter:{' '}
-            <span
-              className={cn({
-                'text-red-500': color === 'red',
-                'text-green-500': color === 'green',
-                'text-blue-500': color === 'blue',
-                'text-purple-500': color === 'purple',
-              })}
-            >
-              {count}
-            </span>
+          <h2
+            className='mb-1 text-lg font-bold'
+            style={{
+              color: color,
+            }}
+          >
+            {`Counter: ${count}`}
           </h2>
           <div className='flex justify-center mb-4'>
             <button
               className='text-sm bg-blue-500 text-white px-4 py-2 font-bold rounded-md m-2 hover:bg-blue-700'
-              onClick={handleIncreaseByIncrement}
+              onClick={handleClickIncreaseByIncrement}
               type='button'
             >
               Increase +{increment}
@@ -146,7 +164,7 @@ function App() {
               {[1, 2, 3, 4, 5].map((number) => (
                 <button
                   type='button'
-                  onClick={handleUpdateIncrementRoundButton}
+                  onClick={handleSelectIncrement}
                   key={number}
                   value={number}
                   className='text-sm bg-blue-500 text-white w-10 h-10 rounded-full hover:bg-blue-700 hover:font-bold'
@@ -165,7 +183,7 @@ function App() {
               name='choose-custom-increment'
               id='id-choose-custom-increment'
               value={customIncrement}
-              onChange={handleCustomIncrement}
+              onChange={handleTextCustomIncrement}
             />
             <input
               type='button'
@@ -184,12 +202,12 @@ function App() {
                   'hover:bg-blue-500': hasErrorsCustomIncrement,
                 },
               )}
-              onClick={handleCustomIncrementSubmit}
+              onClick={handleSubmitCustomIncrement}
               disabled={hasErrorsCustomIncrement}
             />
           </div>
           {hasErrorsCustomIncrement && (
-            <div class='mt-3 bg-orange-100 border-l-8 border-orange-500 text-orange-700 p-2 w-[300px] text-center flex mx-auto justify-center'>
+            <div className='mt-3 bg-orange-100 border-l-8 border-orange-500 text-orange-700 p-2 w-[300px] text-center flex mx-auto justify-center'>
               {errorMessageCustomIncrement}
             </div>
           )}
@@ -202,28 +220,30 @@ function App() {
 
           <select
             value={color}
-            onChange={handleColorSelect}
+            onChange={handleSelectColor}
             id='id-select-counter-color'
             className='outline-none mb-4'
           >
             <option value=''>Choose color</option>
-            <option value='red'>Red</option>
-            <option value='green'>Green</option>
-            <option value='blue'>Blue</option>
-            <option value='purple'>Purple</option>
+            <option value='#f44336'>Red</option>
+            <option value='#ff9800'>Orange</option>
+            <option value='#388e3c'>Green</option>
+            <option value='#1565c0'>Blue</option>
+            <option value='#5e35b1'>Purple</option>
           </select>
 
           <div className='flex justify-center gap-3 text-sm'>
             <input
               name='input-text-1'
               type='text'
-              className='bg-blue-100 px-3 py-2 outline-none'
+              className='bg-blue-100 px-3 py-2 w-40 outline-none'
               value={textColor}
-              onChange={handleTextIncrementChange}
+              onChange={handleTextColor}
             />
             <input
-              type='button'
+              type='submit'
               value='Update Color'
+              // className='bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600'
               className={cn(
                 'bg-blue-500',
                 'text-white',
@@ -233,27 +253,29 @@ function App() {
                 'text-sm',
                 'hover:bg-blue-600',
                 {
-                  'opacity-50': hasErrorsUpdateColor,
-                  'cursor-not-allowed': hasErrorsUpdateColor,
-                  'hover:bg-blue-500': hasErrorsUpdateColor,
+                  'opacity-50': hasErrorSubmitColor,
+                  'cursor-not-allowed': hasErrorSubmitColor,
+                  'hover:bg-blue-500': hasErrorSubmitColor,
                 },
               )}
-              onClick={handleColorTextSubmit}
-              disabled={hasErrorsUpdateColor}
+              onClick={handleSubmitColor}
+              disabled={hasErrorSubmitColor}
             />
           </div>
+
+          {hasErrorSubmitColor && (
+            <div className='mt-3 bg-orange-100 border-l-8 border-orange-500 text-orange-700 p-3 w-[320px] text-left flex mx-auto justify-center'>
+              The given color was not found in our database. Try different one!
+            </div>
+          )}
+
+          {hasErrorTextColor && (
+            <div className='mt-3 bg-orange-100 border-l-8 border-orange-500 text-orange-700 p-3 w-[320px] text-left flex mx-auto justify-center'>
+              Color name must contain only alphabetical characters and spaces.
+            </div>
+          )}
         </div>
       </form>
-
-      {dataFromServer && dataFromServer.map((item) => {
-        if (item.id < 10) {
-          return (
-            <p>{`${item.name} - ${item.hex} (id=${item.id})`}</p>
-          )
-        }
-
-        return null;
-      })}
     </div>
   );
 }
