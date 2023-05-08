@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
 
 const API_URL = 'https://api.sampleapis.com/csscolornames/colors';
+const DEFAULT_BACKGROUND_COLOR = '#3B82F6';
 
 function App() {
   const [count, setCount] = useState(0);
   const [increment, setIncrement] = useState(1);
   const [customIncrement, setCustomIncrement] = useState('');
-  const [color, setColor] = useState('');
+  const [color, setColor] = useState(DEFAULT_BACKGROUND_COLOR);
   const [textIncrement, setTextIncrement] = useState('');
   const [textColor, setTextColor] = useState('');
   const [dataFromServer, setDataFromServer] = useState(null);
@@ -53,9 +54,7 @@ function App() {
 
     setTextColor('');
 
-    foundColor
-      ? setColor(foundColor.hex)
-      : setHasErrorSubmitColor(true);
+    foundColor ? setColor(foundColor.hex) : setHasErrorSubmitColor(true);
   };
 
   const handleSelectIncrement = (e) => {
@@ -74,7 +73,7 @@ function App() {
     setCount(0);
     setIncrement(1);
     setCustomIncrement('');
-    setColor('');
+    setColor(DEFAULT_BACKGROUND_COLOR);
     setTextIncrement('');
     setHasErrorsCustomIncrement(false);
   };
@@ -117,37 +116,47 @@ function App() {
     setCustomIncrement('');
   };
 
+  function handleOnMouseEnter(event) {
+    event.target.style.backgroundImage = 'linear-gradient(rgb(0 0 0/30%) 0 0)';
+    event.target.style.fontWeight = '700';
+  }
+  function handleOnMouseLeave(event) {
+    event.target.style.background = color;
+  }
+
   return (
     <div className='h-screen flex flex-col items-center justify-center'>
-      <form
-      className='border-4 p-12'
-        onSubmit={handleFormSubmit}
-      >
+      <form className='border-4 p-12' onSubmit={handleFormSubmit}>
         <h1 className='form-title mb-4 text-3xl font-bold'>
           Zynk's React Counter
         </h1>
 
         <div className='text-center text-md mb-6'>
-          <h2
-            className='mb-1 text-lg font-bold'
-            style={{
-              color: color,
-            }}
-          >
-            {`Counter: ${count}`}
-          </h2>
+          <h2 className='mb-1 text-lg font-bold'>{`Counter: ${count}`}</h2>
           <div className='flex justify-center mb-4'>
             <button
-              className='text-sm bg-blue-500 text-white px-4 py-2 font-bold rounded-md m-2 hover:bg-blue-700'
-              onClick={handleClickIncreaseByIncrement}
               type='button'
+              className='text-sm text-white px-4 py-2 rounded-md m-2'
+              // Dynamically changing background-color
+              style={{
+                backgroundColor: color ? color : DEFAULT_BACKGROUND_COLOR,
+              }}
+              onMouseEnter={handleOnMouseEnter}
+              onMouseLeave={handleOnMouseLeave}
+              onClick={handleClickIncreaseByIncrement}
             >
               Increase +{increment}
             </button>
             <button
-              className='text-sm bg-blue-500 text-white px-4 py-2 font-bold rounded-md m-2 hover:bg-blue-700'
-              onClick={handleResetCounter}
               type='button'
+              className='text-sm text-white px-4 py-2 rounded-md m-2'
+              // Dynamically changing background-color
+              style={{
+                backgroundColor: color ? color : DEFAULT_BACKGROUND_COLOR,
+              }}
+              onMouseEnter={handleOnMouseEnter}
+              onMouseLeave={handleOnMouseLeave}
+              onClick={handleResetCounter}
             >
               Reset
             </button>
@@ -165,10 +174,16 @@ function App() {
               {[1, 2, 3, 4, 5].map((number) => (
                 <button
                   type='button'
-                  onClick={handleSelectIncrement}
                   key={number}
                   value={number}
-                  className='text-sm bg-blue-500 text-white w-10 h-10 rounded-full hover:bg-blue-700 hover:font-bold'
+                  className='text-sm text-white w-10 h-10 rounded-full'
+                  // Dynamically changing background-color
+                  style={{
+                    backgroundColor: color ? color : DEFAULT_BACKGROUND_COLOR,
+                  }}
+                  onMouseEnter={handleOnMouseEnter}
+                  onMouseLeave={handleOnMouseLeave}
+                  onClick={handleSelectIncrement}
                 >
                   {number}
                 </button>
@@ -180,7 +195,7 @@ function App() {
             <p>Choose custom: </p>
             <input
               type='text'
-              className='bg-blue-100 px-3 py-1 outline-none w-16'
+              className='bg-gray-200 px-3 py-1 outline-none w-16'
               placeholder='1-100'
               name='choose-custom-increment'
               id='id-choose-custom-increment'
@@ -191,7 +206,6 @@ function App() {
               type='button'
               value='Apply'
               className={cn(
-                'bg-blue-500',
                 'text-white',
                 'px-4',
                 'py-2',
@@ -204,6 +218,12 @@ function App() {
                   'hover:bg-blue-500': hasErrorsCustomIncrement,
                 },
               )}
+              // Dynamically changing background-color
+              style={{
+                backgroundColor: color ? color : DEFAULT_BACKGROUND_COLOR,
+              }}
+              onMouseEnter={handleOnMouseEnter}
+              onMouseLeave={handleOnMouseLeave}
               onClick={handleSubmitCustomIncrement}
               disabled={hasErrorsCustomIncrement}
             />
@@ -216,7 +236,7 @@ function App() {
         </div>
 
         <div className='text-center text-md'>
-          <h2 className='mb-3 text-lg font-bold'>{`Color theme: `}</h2>
+          <h2 className='mb-3 text-lg font-bold'>{`Change Theme: `}</h2>
 
           <label htmlFor='id-select-counter-color'>{`Select theme: `}</label>
 
@@ -224,14 +244,14 @@ function App() {
             value={color}
             onChange={handleSelectColor}
             id='id-select-counter-color'
-            className='outline-none mb-4'
+            className='outline-none mb-4 w-40'
           >
-            <option value=''>Choose color</option>
-            <option value='#f44336'>Red</option>
-            <option value='#ff9800'>Orange</option>
+            <option value=''>Default (Blue)</option>
+            <option value='#795548'>Brown</option>
+            <option value='#fb8c00'>Orange</option>
             <option value='#388e3c'>Green</option>
-            <option value='#1565c0'>Blue</option>
             <option value='#5e35b1'>Purple</option>
+            <option value='#c62828'>Red</option>
           </select>
 
           <div className='flex justify-center gap-3 text-sm'>
@@ -239,16 +259,14 @@ function App() {
               type='text'
               name='input-text-1'
               placeholder='Add custom color...'
-              className='bg-blue-100 px-3 py-2 w-40 outline-none'
+              className='bg-gray-200 px-3 py-2 w-40 outline-none'
               value={textColor}
               onChange={handleTextColor}
             />
             <input
               type='button'
               value='Update Color'
-              // className='bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600'
               className={cn(
-                'bg-blue-500',
                 'text-white',
                 'px-4',
                 'py-2',
@@ -256,13 +274,19 @@ function App() {
                 'text-sm',
                 'hover:bg-blue-600',
                 {
-                  'opacity-50': hasErrorSubmitColor,
-                  'cursor-not-allowed': hasErrorSubmitColor,
-                  'hover:bg-blue-500': hasErrorSubmitColor,
+                  'opacity-50': hasErrorSubmitColor || hasErrorTextColor,
+                  'cursor-not-allowed': hasErrorSubmitColor || hasErrorTextColor,
+                  'hover:bg-blue-500': hasErrorSubmitColor || hasErrorTextColor,
                 },
               )}
+              // Dynamically changing background-color
+              style={{
+                backgroundColor: color ? color : DEFAULT_BACKGROUND_COLOR,
+              }}
+              onMouseEnter={handleOnMouseEnter}
+              onMouseLeave={handleOnMouseLeave}
               onClick={handleSubmitColor}
-              disabled={hasErrorSubmitColor}
+              disabled={hasErrorSubmitColor || hasErrorTextColor}
             />
           </div>
 
