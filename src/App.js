@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
-import { data } from 'autoprefixer';
-import { type } from '@testing-library/user-event/dist/type';
 
 const API_URL = 'https://api.sampleapis.com/csscolornames/colors';
 
@@ -121,7 +119,10 @@ function App() {
 
   return (
     <div className='h-screen flex flex-col items-center justify-center'>
-      <form onSubmit={handleFormSubmit}>
+      <form
+      className='border-4 p-12'
+        onSubmit={handleFormSubmit}
+      >
         <h1 className='form-title mb-4 text-3xl font-bold'>
           Zynk's React Counter
         </h1>
@@ -180,6 +181,7 @@ function App() {
             <input
               type='text'
               className='bg-blue-100 px-3 py-1 outline-none w-16'
+              placeholder='1-100'
               name='choose-custom-increment'
               id='id-choose-custom-increment'
               value={customIncrement}
@@ -213,10 +215,10 @@ function App() {
           )}
         </div>
 
-        <div className='text-center text-md mb-6'>
-          <h2 className='mb-3 text-lg font-bold'>{`Color: default`}</h2>
+        <div className='text-center text-md'>
+          <h2 className='mb-3 text-lg font-bold'>{`Color theme: `}</h2>
 
-          <label htmlFor='id-select-counter-color'>{`Counter color: `}</label>
+          <label htmlFor='id-select-counter-color'>{`Select theme: `}</label>
 
           <select
             value={color}
@@ -234,14 +236,15 @@ function App() {
 
           <div className='flex justify-center gap-3 text-sm'>
             <input
-              name='input-text-1'
               type='text'
+              name='input-text-1'
+              placeholder='Add custom color...'
               className='bg-blue-100 px-3 py-2 w-40 outline-none'
               value={textColor}
               onChange={handleTextColor}
             />
             <input
-              type='submit'
+              type='button'
               value='Update Color'
               // className='bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600'
               className={cn(
