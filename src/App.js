@@ -29,14 +29,20 @@ function App() {
       .then((data) => setDataFromServer(data));
   }, []);
 
-  // Make error message appear for only a couple of seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setHasErrorSubmitColor(false);
-    }, 3000);
+  // // Make error message appear for only a couple of seconds
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setHasErrorSubmitColor(false);
+  //   }, 3000);
 
-    return () => clearTimeout(timer);
-  }, [hasErrorSubmitColor]);
+  //   return () => clearTimeout(timer);
+  // }, [hasErrorSubmitColor]);
+
+  const displayTempErrorMessage = (errorSetter, timer) => {
+    errorSetter(true);
+
+    setTimeout(() => errorSetter(false), timer);
+  };
 
   const handleTextColor = (e) => {
     const typedInput = e.target.value;
@@ -54,7 +60,10 @@ function App() {
 
     setTextColor('');
 
-    foundColor ? setColor(foundColor.hex) : setHasErrorSubmitColor(true);
+    // foundColor ? setColor(foundColor.hex) : setHasErrorSubmitColor(true);
+    foundColor
+      ? setColor(foundColor.hex)
+      : displayTempErrorMessage(setHasErrorSubmitColor, 3500);
   };
 
   const handleSelectIncrement = (e) => {
@@ -126,7 +135,7 @@ function App() {
 
   return (
     <div className='h-screen flex flex-col items-center justify-center'>
-      <form className='border-4 p-12' onSubmit={handleFormSubmit}>
+      <form className='border-8 px-20 py-12' onSubmit={handleFormSubmit}>
         <h1 className='form-title mb-4 text-3xl font-bold'>
           Zynk's React Counter
         </h1>
@@ -163,7 +172,7 @@ function App() {
           </div>
         </div>
 
-        <div className='text-center text-md mb-6'>
+        <div className='text-center text-md mb-9'>
           <h2 className='mb-3 text-lg font-bold'>
             {`Increment: ${increment}`}
           </h2>
@@ -191,7 +200,7 @@ function App() {
             </div>
           </div>
 
-          <div className='flex justify-center items-center gap-3 mb-2'>
+          <div className='flex justify-center items-center gap-3'>
             <p>Choose custom: </p>
             <input
               type='text'
@@ -236,7 +245,8 @@ function App() {
         </div>
 
         <div className='text-center text-md'>
-          <h2 className='mb-3 text-lg font-bold'>{`Change Theme: `}</h2>
+          <hr class='mb-3 border-2' />
+          <h2 className='mb-3 text-lg font-bold'>{`Choose Color Theme`}</h2>
 
           <label htmlFor='id-select-counter-color'>{`Select theme: `}</label>
 
@@ -246,7 +256,7 @@ function App() {
             id='id-select-counter-color'
             className='outline-none mb-4 w-40'
           >
-            <option value=''>Default (Blue)</option>
+            <option value=''>Choose color</option>
             <option value='#795548'>Brown</option>
             <option value='#fb8c00'>Orange</option>
             <option value='#388e3c'>Green</option>
@@ -275,7 +285,8 @@ function App() {
                 'hover:bg-blue-600',
                 {
                   'opacity-50': hasErrorSubmitColor || hasErrorTextColor,
-                  'cursor-not-allowed': hasErrorSubmitColor || hasErrorTextColor,
+                  'cursor-not-allowed':
+                    hasErrorSubmitColor || hasErrorTextColor,
                   'hover:bg-blue-500': hasErrorSubmitColor || hasErrorTextColor,
                 },
               )}
