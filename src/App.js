@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
 
+import Alert from './components/Alert';
+import { alertMessages } from './alertMessages';
+import { alertTypes } from './alertTypes';
+
 const API_URL = 'https://api.sampleapis.com/csscolornames/colors';
 const DEFAULT_BACKGROUND_COLOR = '#3B82F6';
 
 function App() {
   const [count, setCount] = useState(0);
   const [increment, setIncrement] = useState(1);
+
   const [customIncrement, setCustomIncrement] = useState('');
+
   const [color, setColor] = useState(DEFAULT_BACKGROUND_COLOR);
-  const [textIncrement, setTextIncrement] = useState('');
+
   const [textColor, setTextColor] = useState('');
-  const [dataFromServer, setDataFromServer] = useState(null);
+  const [colorListFromServer, setColorListFromServer] = useState(null);
 
   // Errors when choosing custom counter increment
   const [hasErrorsCustomIncrement, setHasErrorsCustomIncrement] =
@@ -26,17 +32,8 @@ function App() {
   useEffect(() => {
     fetch(API_URL)
       .then((result) => result.json())
-      .then((data) => setDataFromServer(data));
+      .then((data) => setColorListFromServer(data));
   }, []);
-
-  // // Make error message appear for only a couple of seconds
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setHasErrorSubmitColor(false);
-  //   }, 3000);
-
-  //   return () => clearTimeout(timer);
-  // }, [hasErrorSubmitColor]);
 
   const displayTempErrorMessage = (errorSetter, timer) => {
     errorSetter(true);
@@ -56,11 +53,12 @@ function App() {
   };
 
   const handleSubmitColor = () => {
-    const foundColor = dataFromServer.find((item) => item.name === textColor);
+    const foundColor = colorListFromServer.find(
+      (item) => item.name === textColor,
+    );
 
     setTextColor('');
 
-    // foundColor ? setColor(foundColor.hex) : setHasErrorSubmitColor(true);
     foundColor
       ? setColor(foundColor.hex)
       : displayTempErrorMessage(setHasErrorSubmitColor, 3500);
@@ -83,7 +81,6 @@ function App() {
     setIncrement(1);
     setCustomIncrement('');
     setColor(DEFAULT_BACKGROUND_COLOR);
-    setTextIncrement('');
     setHasErrorsCustomIncrement(false);
   };
 
@@ -92,11 +89,6 @@ function App() {
   };
 
   const handleTextCustomIncrement = (e) => {
-    // Calling `setState` doesn't immediately update the state object -> won't be
-    // able to see the new change immediately after calling setState ...
-    // Solution 1 - storing input in another variable (and test-validate that)
-    // Solution 2 - move the logic into the callback function that will be
-    // only called AFTER the state updates ...
     const typedInput = e.target.value;
     setCustomIncrement(typedInput);
 
@@ -105,7 +97,6 @@ function App() {
     } else if (isNaN(typedInput)) {
       setErrorMessageCustomIncrement('This is not a number');
       setHasErrorsCustomIncrement(true);
-      // Only integers allowed
     } else if (typedInput % 1 !== 0) {
       setErrorMessageCustomIncrement('Decimal places are not allowed');
       setHasErrorsCustomIncrement(true);
@@ -129,6 +120,7 @@ function App() {
     event.target.style.backgroundImage = 'linear-gradient(rgb(0 0 0/30%) 0 0)';
     event.target.style.fontWeight = '700';
   }
+
   function handleOnMouseLeave(event) {
     event.target.style.background = color;
   }
@@ -137,7 +129,7 @@ function App() {
     <div className='h-screen flex flex-col items-center justify-center'>
       <form className='border-8 px-20 py-12' onSubmit={handleFormSubmit}>
         <h1 className='form-title mb-4 text-3xl font-bold'>
-          Zynk's React Counter
+          Zynk's Simple Counter
         </h1>
 
         <div className='text-center text-md mb-6'>
@@ -146,7 +138,6 @@ function App() {
             <button
               type='button'
               className='text-sm text-white px-4 py-2 rounded-md m-2'
-              // Dynamically changing background-color
               style={{
                 backgroundColor: color ? color : DEFAULT_BACKGROUND_COLOR,
               }}
@@ -156,10 +147,10 @@ function App() {
             >
               Increase +{increment}
             </button>
+
             <button
               type='button'
               className='text-sm text-white px-4 py-2 rounded-md m-2'
-              // Dynamically changing background-color
               style={{
                 backgroundColor: color ? color : DEFAULT_BACKGROUND_COLOR,
               }}
@@ -186,7 +177,6 @@ function App() {
                   key={number}
                   value={number}
                   className='text-sm text-white w-10 h-10 rounded-full'
-                  // Dynamically changing background-color
                   style={{
                     backgroundColor: color ? color : DEFAULT_BACKGROUND_COLOR,
                   }}
@@ -202,6 +192,7 @@ function App() {
 
           <div className='flex justify-center items-center gap-3'>
             <p>Choose custom: </p>
+
             <input
               type='text'
               className='bg-gray-200 px-3 py-1 outline-none w-16'
@@ -211,6 +202,7 @@ function App() {
               value={customIncrement}
               onChange={handleTextCustomIncrement}
             />
+
             <input
               type='button'
               value='Apply'
@@ -227,7 +219,6 @@ function App() {
                   'hover:bg-blue-500': hasErrorsCustomIncrement,
                 },
               )}
-              // Dynamically changing background-color
               style={{
                 backgroundColor: color ? color : DEFAULT_BACKGROUND_COLOR,
               }}
@@ -237,6 +228,7 @@ function App() {
               disabled={hasErrorsCustomIncrement}
             />
           </div>
+
           {hasErrorsCustomIncrement && (
             <div className='mt-3 bg-orange-100 border-l-8 border-orange-500 text-orange-700 p-2 w-[300px] text-center flex mx-auto justify-center'>
               {errorMessageCustomIncrement}
@@ -273,6 +265,7 @@ function App() {
               value={textColor}
               onChange={handleTextColor}
             />
+
             <input
               type='button'
               value='Update Color'
@@ -290,7 +283,6 @@ function App() {
                   'hover:bg-blue-500': hasErrorSubmitColor || hasErrorTextColor,
                 },
               )}
-              // Dynamically changing background-color
               style={{
                 backgroundColor: color ? color : DEFAULT_BACKGROUND_COLOR,
               }}
@@ -301,17 +293,17 @@ function App() {
             />
           </div>
 
-          {hasErrorSubmitColor && (
-            <div className='mt-3 bg-orange-100 border-l-8 border-orange-500 text-orange-700 p-3 w-[320px] text-left flex mx-auto justify-center'>
-              The given color was not found in our database. Try different one!
-            </div>
-          )}
+          <Alert
+            isActive={hasErrorSubmitColor}
+            alertText={alertMessages.ColorNotFound}
+            alertType={alertTypes.Warning}
+          />
 
-          {hasErrorTextColor && (
-            <div className='mt-3 bg-orange-100 border-l-8 border-orange-500 text-orange-700 p-3 w-[320px] text-left flex mx-auto justify-center'>
-              Color name must contain only alphabetical characters and spaces.
-            </div>
-          )}
+          <Alert
+            isActive={hasErrorTextColor}
+            alertText={alertMessages.ColorValidation}
+            alertType={alertTypes.Warning}
+          />
         </div>
       </form>
     </div>
