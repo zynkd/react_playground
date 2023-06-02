@@ -1,9 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cn from 'classnames';
+import { alertTypes } from '../alertTypes';
 
 const Alert = ({ isActive, alertText, alertType }) => {
-  return isActive && (
-    <div className='mt-3 bg-orange-100 border-l-8 border-orange-500 text-orange-700 p-3 w-[320px] text-left flex mx-auto justify-center'>
+  return (
+    <div
+      style={{
+        visibility: isActive ? 'visible' : 'hidden',
+      }}
+      className={cn(
+        'flex',
+        'justify-center',
+        'mx-auto',
+        'm-3',
+        'py-2',
+        'px-4',
+        'cursor-default',
+        'max-w-[300px]',
+        'min-h-[36px]',
+        'text-left',
+        'text-sm',
+        'border-l-8',
+        {
+          'bg-orange-100 text-orange-700 border-orange-500':
+            alertType === alertTypes.Warning,
+          'bg-red-100 text-red-700 border-red-500':
+            alertType === alertTypes.Error,
+          'bg-green-100 text-green-700 border-green-500':
+            alertType === alertTypes.Notification,
+        },
+      )}
+    >
       {alertText}
     </div>
   );
