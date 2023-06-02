@@ -9,110 +9,105 @@ const API_URL = 'https://api.sampleapis.com/csscolornames/colors';
 const DEFAULT_BACKGROUND_COLOR = '#3B82F6';
 
 function App() {
-  const [colorListFromServer, setColorListFromServer] = useState(null);
+  const [colorsFromServer, setColorsFromServer] = useState(null);
 
   const [count, setCount] = useState(0);
   const [increment, setIncrement] = useState(1);
-  const [customIncrement, setCustomIncrement] = useState('');
-
   const [color, setColor] = useState(DEFAULT_BACKGROUND_COLOR);
-  const [textColor, setTextColor] = useState('');
 
-  const [errorMessageCustomIncrement, setErrorMessageCustomIncrement] =
-  useState('');
-  // const hasErrorsCustomIncrement =
-  //   errorMessageCustomIncrement === '' ? false : true;
-  const hasErrorsCustomIncrement = Boolean(errorMessageCustomIncrement);
+  const [typedColor, setTypedColor] = useState('');
+  const [typedIncrement, setTypedIncrement] = useState('');
 
-  // Errors when trying type or submit a new color
-  const [hasErrorTextColor, setHasErrorTextColor] = useState(false);
-  const [hasErrorSubmitColor, setHasErrorSubmitColor] = useState(false);
+  const [errorMessageIncrement, setErrorMessageIncrement] = useState('');
+  const [errorMessageColor, setErrorMessageColor] = useState('');
+  const hasErrorsCustomIncrement = Boolean(errorMessageIncrement);
+  const hasErrorColor = Boolean(errorMessageColor);
 
   useEffect(() => {
     fetch(API_URL)
       .then((result) => result.json())
-      .then((data) => setColorListFromServer(data));
+      .then((data) => setColorsFromServer(data));
   }, []);
-
-  const displayTempErrorMessage = (errorSetter, timer) => {
-    errorSetter(true);
-
-    setTimeout(() => errorSetter(false), timer);
-  };
 
   // Handlers for Counter
   const handleCounterIncreaseButton = () => {
     setCount((prev) => prev + increment);
   };
 
-  const handleCounterResetButton = () => {
+  const handleCounterReset = () => {
     setCount(0);
     setIncrement(1);
-    setCustomIncrement('');
+    setTypedIncrement('');
     setColor(DEFAULT_BACKGROUND_COLOR);
   };
 
   // Handlers for Increments
-  const handleIncrementTextInput = (e) => {
-    const typedInput = e.target.value;
-    setCustomIncrement(typedInput);
-
-    if (typedInput === '') {
-      setErrorMessageCustomIncrement('');
-    } else if (isNaN(typedInput)) {
-      setErrorMessageCustomIncrement('This is not a number');
-    } else if (typedInput % 1 !== 0) {
-      setErrorMessageCustomIncrement('Decimal places are not allowed');
-    } else if (typedInput < 1 || typedInput > 100) {
-      setErrorMessageCustomIncrement('Numbers must be between 1 and 100');
-    } else {
-      setErrorMessageCustomIncrement('');
-    }
-  };
-
-  const handleIncrementSubmit = () => {
-    if (!hasErrorsCustomIncrement && customIncrement !== '') {
-      setIncrement(+customIncrement);
-    }
-
-    setCustomIncrement('');
-  };
-
   const handleIncrementSelect = (e) => {
     setIncrement(+e.target.value);
   };
 
-  // Handlers for Colors
+  const handleIncrementTextInput = (e) => {
+    const typedInput = e.target.value;
+    setTypedIncrement(typedInput);
 
+    if (typedInput === '') {
+      setErrorMessageIncrement('');
+    } else if (isNaN(typedInput)) {
+      setErrorMessageIncrement(alertMessages.IncrementNotANumber);
+    } else if (typedInput % 1 !== 0) {
+      setErrorMessageIncrement(alertMessages.IncrementNotDecimals);
+    } else if (typedInput < 1 || typedInput > 100) {
+      setErrorMessageIncrement(alertMessages.IncrementOutsideRange);
+    } else {
+      setErrorMessageIncrement('');
+    }
+  };
+
+  const handleIncrementSubmit = () => {
+    if (!hasErrorsCustomIncrement && typedIncrement !== '') {
+      setIncrement(+typedIncrement);
+    }
+
+    setTypedIncrement('');
+  };
+
+  // Handlers for Colors
   const handleColorSelect = (e) => {
     setColor(e.target.value);
   };
 
   const handleColorTextInput = (e) => {
     const typedInput = e.target.value;
-    setTextColor(typedInput);
+    setTypedColor(typedInput);
 
-    if (typedInput === '' || /^[A-Za-z\s]+$/.test(typedInput)) {
-      setHasErrorTextColor(false);
+    if (typedInput === '') {
+      setErrorMessageColor('');
+    } else if (!/^[A-Za-z\s]+$/.test(typedInput)) {
+      setErrorMessageColor(alertMessages.ColorOnlyAlphabeticalChars);
+    } else if (typedInput.length > 19) {
+      setErrorMessageColor(alertMessages.ColorTextTooLong);
     } else {
-      setHasErrorTextColor(true);
+      setErrorMessageColor('');
     }
   };
 
   const handleColorSubmit = () => {
-    const foundColor = colorListFromServer.find(
-      (item) => item.name === textColor,
+    const foundColor = colorsFromServer.find(
+      (item) => item.name === typedColor,
     );
-
-    setTextColor('');
 
     foundColor
       ? setColor(foundColor.hex)
-      : displayTempErrorMessage(setHasErrorSubmitColor, 3500);
+      : setErrorMessageColor(alertMessages.ColorNotFound);
+
+    setTypedColor('');
+
+    setTimeout(() => {
+      setErrorMessageColor('');
+    }, 3000);
   };
 
   // Handler for Form
-
   const handleFormSubmit = (e) => {
     e.preventDefault();
   };
@@ -130,7 +125,7 @@ function App() {
     <div className='max-w-[540px] mx-auto px-2'>
       <main className='h-screen flex flex-col items-center justify-center text-center'>
         <form
-          className='px-4 py-8 pb-2 sm:px-16 lg:px-24 lg:py-10 lg:pb-6 border-0 sm:border-8 md:border-8'
+          className='px-4 py-8 pb-2 sm:px-20 lg:px-24 lg:py-10 lg:pb-6 border-0 sm:border-8 md:border-8'
           onSubmit={handleFormSubmit}
         >
           <section>
@@ -140,9 +135,10 @@ function App() {
           </section>
 
           {/* Counter tracker */}
-          <section className='mb-12'>
+          <section className='mb-16'>
             <h2 className='mb-1 text-lg font-bold'>{`Counter: ${count}`}</h2>
-            <div className='flex justify-center mb-6'>
+
+            <div className='flex justify-center'>
               <button
                 type='button'
                 className='text-sm text-white px-4 py-2 rounded-md m-2'
@@ -153,13 +149,14 @@ function App() {
               >
                 Increase +{increment}
               </button>
+
               <button
                 type='button'
                 className='text-sm text-white px-4 py-2 rounded-md m-2'
                 style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
                 onMouseEnter={handleOnMouseEnter}
                 onMouseLeave={handleOnMouseLeave}
-                onClick={handleCounterResetButton}
+                onClick={handleCounterReset}
               >
                 Reset
               </button>
@@ -192,6 +189,7 @@ function App() {
                 ))}
               </div>
             </div>
+
             <div className='flex justify-center items-center gap-3'>
               <p>Choose custom: </p>
               <input
@@ -200,7 +198,7 @@ function App() {
                 placeholder='1-100'
                 name='choose-custom-increment'
                 id='id-choose-custom-increment'
-                value={customIncrement}
+                value={typedIncrement}
                 onChange={handleIncrementTextInput}
               />
               <input
@@ -227,14 +225,9 @@ function App() {
               />
             </div>
 
-            {/* {hasErrorsCustomIncrement && (
-              <div className='mt-3 bg-orange-100 border-l-8 border-orange-500 text-orange-700 p-2 w-[300px] text-center flex mx-auto justify-center'>
-                {errorMessageCustomIncrement}
-              </div>
-            )} */}
             <Alert
               isActive={hasErrorsCustomIncrement}
-              alertText={errorMessageCustomIncrement}
+              alertText={errorMessageIncrement}
               alertType={alertTypes.Warning}
             />
           </section>
@@ -242,6 +235,7 @@ function App() {
           {/* Color theme */}
           <section>
             <h2 className='mb-3 text-lg font-bold'>{`Choose Color Theme`}</h2>
+
             <label htmlFor='id-select-counter-color'>{`Select theme: `}</label>
             <select
               value={color}
@@ -256,13 +250,14 @@ function App() {
               <option value='#5e35b1'>Purple</option>
               <option value='#c62828'>Red</option>
             </select>
+
             <div className='flex justify-center gap-3 text-sm'>
               <input
                 type='text'
                 name='input-text-1'
                 placeholder='Add custom color...'
                 className='bg-gray-200 px-3 py-2 w-40 outline-none'
-                value={textColor}
+                value={typedColor}
                 onChange={handleColorTextInput}
               />
               <input
@@ -276,30 +271,22 @@ function App() {
                   'text-sm',
                   'hover:bg-blue-600',
                   {
-                    'opacity-50': hasErrorSubmitColor || hasErrorTextColor,
-                    'cursor-not-allowed':
-                      hasErrorSubmitColor || hasErrorTextColor,
-                    'hover:bg-blue-500':
-                      hasErrorSubmitColor || hasErrorTextColor,
+                    'opacity-50': hasErrorColor || hasErrorColor,
+                    'cursor-not-allowed': hasErrorColor || hasErrorColor,
+                    'hover:bg-blue-500': hasErrorColor || hasErrorColor,
                   },
                 )}
                 style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
                 onMouseEnter={handleOnMouseEnter}
                 onMouseLeave={handleOnMouseLeave}
                 onClick={handleColorSubmit}
-                disabled={hasErrorSubmitColor || hasErrorTextColor}
+                disabled={hasErrorColor || hasErrorColor}
               />
             </div>
 
-            {/* <Alert
-              isActive={hasErrorSubmitColor}
-              alertText={alertMessages.ColorNotFound}
-              alertType={alertTypes.Warning}
-            /> */}
-
             <Alert
-              isActive={hasErrorTextColor}
-              alertText={alertMessages.ColorOnlyAlphabeticalChars}
+              isActive={hasErrorColor}
+              alertText={errorMessageColor}
               alertType={alertTypes.Warning}
             />
           </section>
