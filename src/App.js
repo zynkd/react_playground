@@ -9,8 +9,6 @@ const API_URL = 'https://api.sampleapis.com/csscolornames/colors';
 const DEFAULT_BACKGROUND_COLOR = '#3B82F6';
 
 function App() {
-  const [colorsFromServer, setColorsFromServer] = useState(null);
-
   const [count, setCount] = useState(0);
   const [increment, setIncrement] = useState(1);
   const [color, setColor] = useState(DEFAULT_BACKGROUND_COLOR);
@@ -22,6 +20,8 @@ function App() {
   const [errorMessageColor, setErrorMessageColor] = useState('');
   const hasErrorsCustomIncrement = Boolean(errorMessageIncrement);
   const hasErrorColor = Boolean(errorMessageColor);
+
+  const [colorsFromServer, setColorsFromServer] = useState(null);
 
   useEffect(() => {
     fetch(API_URL)
@@ -43,7 +43,7 @@ function App() {
 
   // Handlers for Increments
   const handleIncrementSelect = (e) => {
-    setIncrement(+e.target.value);
+    setIncrement(Number(e.target.value));
   };
 
   const handleIncrementTextInput = (e) => {
@@ -65,7 +65,7 @@ function App() {
 
   const handleIncrementSubmit = () => {
     if (!hasErrorsCustomIncrement && typedIncrement !== '') {
-      setIncrement(+typedIncrement);
+      setIncrement(Number(typedIncrement));
     }
 
     setTypedIncrement('');
