@@ -12,13 +12,15 @@ const Alert = ({ isActive, alertText, alertType }) => {
       className={cn(
         'flex',
         'justify-center',
+        'items-center',
+        'text-center',
         'mx-auto',
         'm-3',
-        'py-2',
+        'py-1',
         'px-4',
         'cursor-default',
-        'max-w-[300px]',
-        'min-h-[36px]',
+        'max-w-[250px]',
+        'min-h-[56px]',
         'text-left',
         'text-sm',
         'border-l-8',
@@ -43,4 +45,4 @@ Alert.propTypes = {
   isActive: PropTypes.bool.isRequired,
 };
 
-export default Alert;
+export default React.memo(Alert);
