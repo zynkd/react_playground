@@ -1,6 +1,6 @@
-import {DEFAULT_BACKGROUND_COLOR} from '../constants';
+import { DEFAULT_BACKGROUND_COLOR } from '../constants';
 
-const Button = ({ text, color, click, value, shape }) => {
+const Button = ({ text, color, click, value, shape, styleOverwrite }) => {
   const roundedButtonStyle = 'w-10 h-10 rounded-full';
   const standardButtonStyle = 'px-4 py-2 rounded-md m-2';
 
@@ -10,7 +10,7 @@ const Button = ({ text, color, click, value, shape }) => {
       className={`text-sm text-white ${
         shape === 'rounded' ? roundedButtonStyle : standardButtonStyle
       }`}
-      style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
+      style={styleOverwrite ? styleOverwrite : { backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
       onClick={click}
       {...(value && { value })}
     >

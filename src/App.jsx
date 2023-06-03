@@ -8,6 +8,7 @@ import { alertMessages } from './alertMessages';
 import { alertTypes } from './alertTypes';
 import Button from './components/Button';
 import InputButton from './components/InputButton';
+import FlashButton from './components/FlashButton';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -131,7 +132,7 @@ function App() {
             <h2 className='mb-1 text-lg font-bold'>{`Counter: ${count}`}</h2>
 
             <div className='flex justify-center'>
-              <Button
+              <FlashButton
                 text={`Increase +${increment}`}
                 color={color}
                 click={handleCounterIncreaseButton}
