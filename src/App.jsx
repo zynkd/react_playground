@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
+import './App.css';
 
 import Alert from './components/Alert';
 import { alertMessages } from './alertMessages';
@@ -112,20 +113,11 @@ function App() {
     e.preventDefault();
   };
 
-  function handleOnMouseEnter(event) {
-    event.target.style.backgroundImage = 'linear-gradient(rgb(0 0 0/30%) 0 0)';
-    event.target.style.fontWeight = '700';
-  }
-
-  function handleOnMouseLeave(event) {
-    event.target.style.background = color;
-  }
-
   return (
     <div className='max-w-[540px] mx-auto px-2'>
       <main className='h-screen flex flex-col items-center justify-center text-center'>
         <form
-          className='px-4 py-8 pb-2 sm:px-20 lg:px-24 lg:py-10 lg:pb-6 border-0 sm:border-8 md:border-8'
+          className='zynk-form px-4 py-8 pb-2 sm:px-20 lg:px-24 lg:py-10 lg:pb-6 border-0 sm:border-8 md:border-8'
           onSubmit={handleFormSubmit}
         >
           <section>
@@ -143,8 +135,6 @@ function App() {
                 type='button'
                 className='text-sm text-white px-4 py-2 rounded-md m-2'
                 style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
-                onMouseEnter={handleOnMouseEnter}
-                onMouseLeave={handleOnMouseLeave}
                 onClick={handleCounterIncreaseButton}
               >
                 Increase +{increment}
@@ -154,8 +144,6 @@ function App() {
                 type='button'
                 className='text-sm text-white px-4 py-2 rounded-md m-2'
                 style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
-                onMouseEnter={handleOnMouseEnter}
-                onMouseLeave={handleOnMouseLeave}
                 onClick={handleCounterReset}
               >
                 Reset
@@ -182,8 +170,6 @@ function App() {
                     style={{
                       backgroundColor: color || DEFAULT_BACKGROUND_COLOR,
                     }}
-                    onMouseEnter={handleOnMouseEnter}
-                    onMouseLeave={handleOnMouseLeave}
                     onClick={handleIncrementSelect}
                   >
                     {number}
@@ -220,8 +206,6 @@ function App() {
                   },
                 )}
                 style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
-                onMouseEnter={handleOnMouseEnter}
-                onMouseLeave={handleOnMouseLeave}
                 onClick={handleIncrementSubmit}
                 disabled={hasErrorsCustomIncrement}
               />
@@ -279,8 +263,6 @@ function App() {
                   },
                 )}
                 style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
-                onMouseEnter={handleOnMouseEnter}
-                onMouseLeave={handleOnMouseLeave}
                 onClick={handleColorSubmit}
                 disabled={hasErrorColor || hasErrorColor}
               />

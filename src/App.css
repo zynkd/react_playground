@@ -1,0 +1,5 @@
+.zynk-form button:hover,
+.zynk-form input[type='button']:hover {
+  font-weight: 700;
+  background-image: linear-gradient(rgb(0 0 0/30%) 0 0);
+}
