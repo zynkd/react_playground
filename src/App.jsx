@@ -9,6 +9,7 @@ import { alertTypes } from './alertTypes';
 import Button from './components/Button';
 import InputButton from './components/InputButton';
 import FlashButton from './components/FlashButton';
+import InputButtonWithSpinner from './components/InputButtonWithSpinner';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -24,11 +25,15 @@ function App() {
   const hasErrorColor = Boolean(errorMessageColor);
 
   const [colorsFromServer, setColorsFromServer] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch(API_URL)
       .then((result) => result.json())
-      .then((data) => setColorsFromServer(data));
+      .then((data) => {
+        setColorsFromServer(data);
+        setIsLoading(false);
+      });
   }, []);
 
   const handleCounterIncreaseButton = useCallback(() => {
@@ -64,15 +69,18 @@ function App() {
     }
   }, []);
 
-  const handleIncrementSubmit = useCallback((e) => {
-    e.preventDefault();
+  const handleIncrementSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
 
-    if (!hasErrorIncrement && typedIncrement !== '') {
-      setIncrement(Number(typedIncrement));
-    }
+      if (!hasErrorIncrement && typedIncrement !== '') {
+        setIncrement(Number(typedIncrement));
+      }
 
-    setTypedIncrement('');
-  }, [hasErrorIncrement, typedIncrement]);
+      setTypedIncrement('');
+    },
+    [hasErrorIncrement, typedIncrement],
+  );
 
   // Handlers for Colors
   const handleColorSelect = useCallback((e) => {
@@ -222,8 +230,9 @@ function App() {
                 onChange={handleColorTextInput}
               />
 
-              <InputButton
-                text='Update Color'
+              <InputButtonWithSpinner
+                isLoading={isLoading}
+                text='Submit'
                 color={color}
                 click={handleColorSubmit}
                 isDisabled={hasErrorColor}
