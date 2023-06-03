@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../components/Button';
 
 const FlashButton = (WrappedComponent) => {
@@ -35,4 +35,4 @@ const FlashButton = (WrappedComponent) => {
   return FlashButtonComponent;
 };
 
-export default FlashButton(Button);
+export default React.memo(FlashButton(Button));

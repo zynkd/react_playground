@@ -1,3 +1,4 @@
+import React from 'react';
 import { DEFAULT_BACKGROUND_COLOR } from '../constants';
 
 const Button = ({ text, color, click, value, shape, styleOverwrite }) => {
@@ -19,4 +20,4 @@ const Button = ({ text, color, click, value, shape, styleOverwrite }) => {
   );
 };
 
-export default Button;
+export default React.memo(Button);

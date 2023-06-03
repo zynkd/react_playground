@@ -1,3 +1,4 @@
+import React from 'react';
 import cn from 'classnames';
 import {DEFAULT_BACKGROUND_COLOR} from '../constants';
 
@@ -26,5 +27,4 @@ const InputButton = ({ text, color, click, isDisabled }) => {
   );
 };
 
-export default InputButton;
-
+export default React.memo(InputButton);

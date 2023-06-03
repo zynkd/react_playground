@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import { DEFAULT_BACKGROUND_COLOR } from './constants';
 import { API_URL } from './constants';
@@ -31,24 +31,23 @@ function App() {
       .then((data) => setColorsFromServer(data));
   }, []);
 
-  // Handlers for Counter
-  const handleCounterIncreaseButton = () => {
+  const handleCounterIncreaseButton = useCallback(() => {
     setCount((prev) => prev + increment);
-  };
+  }, [increment]);
 
-  const handleCounterReset = () => {
+  const handleCounterReset = useCallback(() => {
     setCount(0);
     setIncrement(1);
     setTypedIncrement('');
     setColor(DEFAULT_BACKGROUND_COLOR);
-  };
+  }, []);
 
   // Handlers for Increments
-  const handleIncrementSelect = (e) => {
+  const handleIncrementSelect = useCallback((e) => {
     setIncrement(Number(e.target.value));
-  };
+  }, []);
 
-  const handleIncrementTextInput = (e) => {
+  const handleIncrementTextInput = useCallback((e) => {
     const typedInput = e.target.value;
     setTypedIncrement(typedInput);
 
@@ -63,22 +62,24 @@ function App() {
     } else {
       setErrorMessageIncrement('');
     }
-  };
+  }, []);
 
-  const handleIncrementSubmit = () => {
+  const handleIncrementSubmit = useCallback((e) => {
+    e.preventDefault();
+
     if (!hasErrorIncrement && typedIncrement !== '') {
       setIncrement(Number(typedIncrement));
     }
 
     setTypedIncrement('');
-  };
+  }, [hasErrorIncrement, typedIncrement]);
 
   // Handlers for Colors
-  const handleColorSelect = (e) => {
+  const handleColorSelect = useCallback((e) => {
     setColor(e.target.value);
-  };
+  }, []);
 
-  const handleColorTextInput = (e) => {
+  const handleColorTextInput = useCallback((e) => {
     const typedInput = e.target.value;
     setTypedColor(typedInput);
 
@@ -91,9 +92,9 @@ function App() {
     } else {
       setErrorMessageColor('');
     }
-  };
+  }, []);
 
-  const handleColorSubmit = () => {
+  const handleColorSubmit = useCallback(() => {
     const foundColor = colorsFromServer.find(
       (item) => item.name === typedColor.toLowerCase(),
     );
@@ -107,12 +108,12 @@ function App() {
     setTimeout(() => {
       setErrorMessageColor('');
     }, 3000);
-  };
+  }, [colorsFromServer, typedColor]);
 
   // Handler for Form
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = useCallback((e) => {
     e.preventDefault();
-  };
+  }, []);
 
   return (
     <div className='max-w-[540px] mx-auto px-2'>
@@ -127,7 +128,7 @@ function App() {
             </h1>
           </section>
 
-          {/* Counter tracker */}
+          {/* Count tracking */}
           <section className='mb-8 pb-8 relative'>
             <h2 className='mb-1 text-lg font-bold'>{`Counter: ${count}`}</h2>
 
@@ -144,7 +145,7 @@ function App() {
             <hr className='absolute bottom-0 left-1/2 -translate-x-1/2 min-w-[340px] border-2' />
           </section>
 
-          {/* Custom Increment */}
+          {/* Custom increment */}
           <section>
             <h2 className='mb-3 text-lg font-bold'>
               {`Increment: ${increment}`}
