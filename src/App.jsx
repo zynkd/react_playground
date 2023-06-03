@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import './App.css';
 import { DEFAULT_BACKGROUND_COLOR } from './constants';
 import { API_URL } from './constants';
@@ -27,14 +27,18 @@ function App() {
   const [colorsFromServer, setColorsFromServer] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  const memoizedColors = useMemo(() => {
     fetch(API_URL)
       .then((result) => result.json())
       .then((data) => {
-        setColorsFromServer(data);
         setIsLoading(false);
+        return data;
       });
   }, []);
+
+  useEffect(() => {
+    setColorsFromServer(memoizedColors);
+  }, [memoizedColors]);
 
   const handleCounterIncreaseButton = useCallback(() => {
     setCount((prev) => prev + increment);
