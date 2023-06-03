@@ -94,7 +94,7 @@ function App() {
 
   const handleColorSubmit = () => {
     const foundColor = colorsFromServer.find(
-      (item) => item.name === typedColor,
+      (item) => item.name === typedColor.toLowerCase(),
     );
 
     foundColor
