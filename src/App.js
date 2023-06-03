@@ -135,7 +135,7 @@ function App() {
           </section>
 
           {/* Counter tracker */}
-          <section className='mb-16'>
+          <section className='mb-8 pb-8 relative'>
             <h2 className='mb-1 text-lg font-bold'>{`Counter: ${count}`}</h2>
 
             <div className='flex justify-center'>
@@ -161,6 +161,8 @@ function App() {
                 Reset
               </button>
             </div>
+
+            <hr className='absolute bottom-0 left-1/2 -translate-x-1/2 min-w-[340px] border-2' />
           </section>
 
           {/* Custom Increment */}
