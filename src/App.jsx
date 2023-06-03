@@ -19,7 +19,7 @@ function App() {
 
   const [errorMessageIncrement, setErrorMessageIncrement] = useState('');
   const [errorMessageColor, setErrorMessageColor] = useState('');
-  const hasErrorsCustomIncrement = Boolean(errorMessageIncrement);
+  const hasErrorIncrement = Boolean(errorMessageIncrement);
   const hasErrorColor = Boolean(errorMessageColor);
 
   const [colorsFromServer, setColorsFromServer] = useState(null);
@@ -65,7 +65,7 @@ function App() {
   };
 
   const handleIncrementSubmit = () => {
-    if (!hasErrorsCustomIncrement && typedIncrement !== '') {
+    if (!hasErrorIncrement && typedIncrement !== '') {
       setIncrement(Number(typedIncrement));
     }
 
@@ -200,19 +200,19 @@ function App() {
                   'text-sm',
                   'hover:bg-blue-600',
                   {
-                    'opacity-50': hasErrorsCustomIncrement,
-                    'cursor-not-allowed': hasErrorsCustomIncrement,
-                    'hover:bg-blue-500': hasErrorsCustomIncrement,
+                    'opacity-50': hasErrorIncrement,
+                    'cursor-not-allowed': hasErrorIncrement,
+                    'hover:bg-blue-500': hasErrorIncrement,
                   },
                 )}
                 style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
                 onClick={handleIncrementSubmit}
-                disabled={hasErrorsCustomIncrement}
+                disabled={hasErrorIncrement}
               />
             </div>
 
             <Alert
-              isActive={hasErrorsCustomIncrement}
+              isActive={hasErrorIncrement}
               alertText={errorMessageIncrement}
               alertType={alertTypes.Warning}
             />
