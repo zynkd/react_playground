@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import cn from 'classnames';
 import './App.css';
+import { DEFAULT_BACKGROUND_COLOR } from './constants';
+import { API_URL } from './constants';
 
 import Alert from './components/Alert';
 import { alertMessages } from './alertMessages';
 import { alertTypes } from './alertTypes';
-
-const API_URL = 'https://api.sampleapis.com/csscolornames/colors';
-const DEFAULT_BACKGROUND_COLOR = '#3B82F6';
+import Button from './components/Button';
+import InputButton from './components/InputButton';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -131,23 +131,13 @@ function App() {
             <h2 className='mb-1 text-lg font-bold'>{`Counter: ${count}`}</h2>
 
             <div className='flex justify-center'>
-              <button
-                type='button'
-                className='text-sm text-white px-4 py-2 rounded-md m-2'
-                style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
-                onClick={handleCounterIncreaseButton}
-              >
-                Increase +{increment}
-              </button>
+              <Button
+                text={`Increase +${increment}`}
+                color={color}
+                click={handleCounterIncreaseButton}
+              />
 
-              <button
-                type='button'
-                className='text-sm text-white px-4 py-2 rounded-md m-2'
-                style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
-                onClick={handleCounterReset}
-              >
-                Reset
-              </button>
+              <Button text='Reset' color={color} click={handleCounterReset} />
             </div>
 
             <hr className='absolute bottom-0 left-1/2 -translate-x-1/2 min-w-[340px] border-2' />
@@ -162,18 +152,14 @@ function App() {
               <p>Select:</p>
               <div className='flex gap-1 justify-center'>
                 {[1, 2, 3, 4, 5].map((number) => (
-                  <button
-                    type='button'
-                    key={number}
+                  <Button
+                    key={`roundedIncrementButton-${number}`}
+                    text={number}
+                    color={color}
+                    click={handleIncrementSelect}
                     value={number}
-                    className='text-sm text-white w-10 h-10 rounded-full'
-                    style={{
-                      backgroundColor: color || DEFAULT_BACKGROUND_COLOR,
-                    }}
-                    onClick={handleIncrementSelect}
-                  >
-                    {number}
-                  </button>
+                    shape='rounded'
+                  />
                 ))}
               </div>
             </div>
@@ -189,25 +175,12 @@ function App() {
                 value={typedIncrement}
                 onChange={handleIncrementTextInput}
               />
-              <input
-                type='button'
-                value='Apply'
-                className={cn(
-                  'text-white',
-                  'px-4',
-                  'py-2',
-                  'rounded-md',
-                  'text-sm',
-                  'hover:bg-blue-600',
-                  {
-                    'opacity-50': hasErrorIncrement,
-                    'cursor-not-allowed': hasErrorIncrement,
-                    'hover:bg-blue-500': hasErrorIncrement,
-                  },
-                )}
-                style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
-                onClick={handleIncrementSubmit}
-                disabled={hasErrorIncrement}
+
+              <InputButton
+                text='Apply'
+                color={color}
+                click={handleIncrementSubmit}
+                isDisabled={hasErrorIncrement}
               />
             </div>
 
@@ -246,25 +219,12 @@ function App() {
                 value={typedColor}
                 onChange={handleColorTextInput}
               />
-              <input
-                type='button'
-                value='Update Color'
-                className={cn(
-                  'text-white',
-                  'px-4',
-                  'py-2',
-                  'rounded-md',
-                  'text-sm',
-                  'hover:bg-blue-600',
-                  {
-                    'opacity-50': hasErrorColor || hasErrorColor,
-                    'cursor-not-allowed': hasErrorColor || hasErrorColor,
-                    'hover:bg-blue-500': hasErrorColor || hasErrorColor,
-                  },
-                )}
-                style={{ backgroundColor: color || DEFAULT_BACKGROUND_COLOR }}
-                onClick={handleColorSubmit}
-                disabled={hasErrorColor || hasErrorColor}
+
+              <InputButton
+                text='Update Color'
+                color={color}
+                click={handleColorSubmit}
+                isDisabled={hasErrorColor}
               />
             </div>
 
